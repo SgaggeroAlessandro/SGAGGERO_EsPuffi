@@ -33,10 +33,6 @@
             this.pnlP = new System.Windows.Forms.Panel();
             this.pnlC = new System.Windows.Forms.Panel();
             this.pnlPuffo = new System.Windows.Forms.Panel();
-            this.btnA = new System.Windows.Forms.Button();
-            this.btnD = new System.Windows.Forms.Button();
-            this.btnW = new System.Windows.Forms.Button();
-            this.btnS = new System.Windows.Forms.Button();
             this.lblR = new System.Windows.Forms.Label();
             this.lblP = new System.Windows.Forms.Label();
             this.panelAvvio.SuspendLayout();
@@ -81,48 +77,8 @@
             // 
             this.pnlPuffo.Location = new System.Drawing.Point(20, 21);
             this.pnlPuffo.Name = "pnlPuffo";
-            this.pnlPuffo.Size = new System.Drawing.Size(93, 120);
+            this.pnlPuffo.Size = new System.Drawing.Size(93, 87);
             this.pnlPuffo.TabIndex = 0;
-            // 
-            // btnA
-            // 
-            this.btnA.Location = new System.Drawing.Point(754, 237);
-            this.btnA.Name = "btnA";
-            this.btnA.Size = new System.Drawing.Size(50, 50);
-            this.btnA.TabIndex = 2;
-            this.btnA.Text = "A";
-            this.btnA.UseVisualStyleBackColor = true;
-            this.btnA.Click += new System.EventHandler(this.btnA_Click);
-            // 
-            // btnD
-            // 
-            this.btnD.Location = new System.Drawing.Point(884, 237);
-            this.btnD.Name = "btnD";
-            this.btnD.Size = new System.Drawing.Size(50, 50);
-            this.btnD.TabIndex = 3;
-            this.btnD.Text = "D";
-            this.btnD.UseVisualStyleBackColor = true;
-            this.btnD.Click += new System.EventHandler(this.btnD_Click);
-            // 
-            // btnW
-            // 
-            this.btnW.Location = new System.Drawing.Point(821, 181);
-            this.btnW.Name = "btnW";
-            this.btnW.Size = new System.Drawing.Size(50, 50);
-            this.btnW.TabIndex = 4;
-            this.btnW.Text = "W";
-            this.btnW.UseVisualStyleBackColor = true;
-            this.btnW.Click += new System.EventHandler(this.btnW_Click);
-            // 
-            // btnS
-            // 
-            this.btnS.Location = new System.Drawing.Point(821, 293);
-            this.btnS.Name = "btnS";
-            this.btnS.Size = new System.Drawing.Size(50, 50);
-            this.btnS.TabIndex = 5;
-            this.btnS.Text = "S";
-            this.btnS.UseVisualStyleBackColor = true;
-            this.btnS.Click += new System.EventHandler(this.btnS_Click);
             // 
             // lblR
             // 
@@ -148,15 +104,11 @@
             this.ClientSize = new System.Drawing.Size(1187, 727);
             this.Controls.Add(this.lblP);
             this.Controls.Add(this.lblR);
-            this.Controls.Add(this.btnS);
-            this.Controls.Add(this.btnW);
-            this.Controls.Add(this.btnD);
-            this.Controls.Add(this.btnA);
             this.Controls.Add(this.pnlP);
             this.Controls.Add(this.panelAvvio);
             this.Name = "Form1";
             this.Text = "Form1";
-            
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.panelAvvio.ResumeLayout(false);
             this.pnlP.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -171,10 +123,6 @@
         private System.Windows.Forms.Panel pnlP;
         private System.Windows.Forms.Panel pnlPuffo;
         private System.Windows.Forms.Panel pnlC;
-        private System.Windows.Forms.Button btnA;
-        private System.Windows.Forms.Button btnD;
-        private System.Windows.Forms.Button btnW;
-        private System.Windows.Forms.Button btnS;
         private System.Windows.Forms.Label lblR;
         private System.Windows.Forms.Label lblP;
     }
