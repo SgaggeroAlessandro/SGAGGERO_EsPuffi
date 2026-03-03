@@ -9,290 +9,377 @@
     using System.Windows.Forms;
     using System.Xml.Schema;
 
-    namespace EsPuffi
+namespace EsPuffi
+{
+    public partial class Form1 : Form
     {
-        public partial class Form1 : Form
+        int p = 0; 
+        int pg = 0; 
+        int velocità = 10; 
+        int l = 110; 
+        int h = 120;
+
+        int lp = 95;
+        int hp = 98;
+
+        int nm = 20; 
+        int nmg = 20;
+
+        bool p1 = true; 
+
+        Panel[] alberiArray = new Panel[10];
+        struct Punto
         {
-            int p = 0; //punteggio puffo
-            int pg = 0; //punteggio Gargamella
-            int velocità = 10; //ogni volta che si clicca il tasto, il puffo si muove di 10 pixel
-            int l = 110; //larghezza della casa
-            int h = 120;//altezza della casa
-        
-            int lp = 85;
-            int hp = 138;
+            public int x;
+            public int y;
 
-            int nm = 20; //numero di mosse che sia il puffo che Gargamella possono fare 
-            int nmg = 20;
-
-            bool p1 = true; //variabile che indica se è il turno del puffo
-            struct Punto
+            public Punto(int x, int y) 
             {
-                public int x;//coordinate del punto
-                public int y;
-
-                public Punto(int x, int y) //costruttore del punto
-                {
-                    this.x = x;
-                    this.y = y;
-                }
+                this.x = x;
+                this.y = y;
             }
-            public Form1()
-            {
-                InitializeComponent();
-                this.KeyPreview = true;//this è il riferimento dell'oggetto stesso, è il form stesso
-                panelAvvio.Visible = true;
-                pnlP.Visible = false;
-                pnlG.Visible = false;
-                lblR.Visible = false;
-                lblR2.Visible = false;
-                lblTrn.Visible = false;
-                lblT.Visible = false;
-                pnlPuffo.Visible = true;
-                Punto punto = new Punto();
-                Random rnd = new Random();
+        }
+        public Form1()
+        {
+            InitializeComponent();
+            this.KeyPreview = true; //this è il riferimento dell'oggetto stesso, è il form stesso, keypreview dà la priorità di lettura dell'input da tastiera al form1, altrimenti non si potrebbero fare tutti i controlli successivi per lo spostamento
+            panelAvvio.Visible = true;
+            pnlP.Visible = false;
+            pictureBoxGarga.Visible = false;
+            lblR.Visible = false;
+            lblR2.Visible = false;
+            lblTrn.Visible = false;
+            lblT.Visible = false;
+            pictureBoxPuffo.Visible = true;
+            Punto punto = new Punto();
+            Random rnd = new Random();
 
-                int Xmax = pnlP.Width - l;
-                int Ymax = pnlP.Height - h;
-                punto.x = rnd.Next(0, Xmax);
-                punto.y = rnd.Next(0, Ymax);
+            int Xmax = pnlP.Width - lp;
+            int Ymax = pnlP.Height - hp;
+            punto.x = rnd.Next(0, Xmax);
+            punto.y = rnd.Next(0, Ymax);
 
-                pnlPuffo.Location = new Point(punto.x, punto.y);
+            pictureBoxPuffo.Location = new Point(punto.x, punto.y);
+
+
+        }
+
+        private void btn_Avvia_Click(object sender, EventArgs e)
+        {
+            panelAvvio.Visible = false; 
+            pnlP.Visible = true; 
+            pictureBoxCasa.Visible = true; 
+            pictureBoxCasa.BackgroundImage = Image.FromFile(@"C:\Users\alesg\OneDrive\Desktop\casa.jpg");
+            pictureBoxCasa.BackgroundImageLayout = ImageLayout.Stretch;
+            pictureBoxGarga.Visible = true; 
+            pictureBoxPuffo.BackgroundImage = Image.FromFile(@"C:\Users\alesg\OneDrive\Desktop\puffo.png");
+            pictureBoxGarga.BackgroundImage = Image.FromFile(@"C:\Users\alesg\OneDrive\Desktop\garga.jpg");
+            pictureBoxPuffo.Visible = true;
+            pictureBoxPuffo.BackgroundImageLayout = ImageLayout.Stretch;
+            pictureBoxGarga.BackgroundImageLayout = ImageLayout.Stretch;
+            lblR.Visible = true; 
+            lblP.Text = p.ToString(); 
+            lblTrn.Visible = true; 
+            lblR2.Visible = true; 
+            lblPG.Text = pg.ToString(); 
+            lblT.Visible = true; 
+
+
+            lblTc.Text = nm.ToString();
 
             alberi();
-            }
+        }
+        private void casettaraggiunta() 
 
-            private void btn_Avvia_Click(object sender, EventArgs e)
+        {
+            int puffoD = pictureBoxPuffo.Location.X + pictureBoxPuffo.Width; 
+            int puffoG = pictureBoxPuffo.Location.Y + pictureBoxPuffo.Height;
+
+
+            int casaD = pictureBoxCasa.Location.X + pictureBoxCasa.Width; 
+            int casaG = pictureBoxCasa.Location.Y + pictureBoxCasa.Height; 
+            if (pictureBoxPuffo.Location.X < casaD && puffoD > pictureBoxCasa.Location.X && pictureBoxPuffo.Location.Y < casaG && puffoG > pictureBoxCasa.Location.Y)
+//pictureBoxPuffo.Location.X < casaD: il lato sinistro del puffo è a sinistra del lato destro della casa
+//puffoD > pictureBoxCasa.Location.X: il lato destro del puffo è a destra del lato sinistro della casa
+//pictureBoxPuffo.Location.Y < casaG:  il lato alto del puffo è sopra il lato basso della casa
+//puffoG > pictureBoxCasa.Location.Y: il lato basso del puffo è sotto il lato alto della casa
             {
-                panelAvvio.Visible = false; //nasconde il pannello di avvio
-                pnlP.Visible = true; //rende il campo di gioco visibile
-                pnlC.Visible = true; //rende la casa visibile
-                pnlC.BackColor = Color.Red; //colore della casa
-                pnlG.Visible = true; //rende il puffo visibile
-                pnlPuffo.BackColor = Color.Blue; //colora il puffo
-                pnlPuffo.Visible = true;
-                pnlG.BackColor = Color.Black; //colore del Gargamella
-                lblR.Visible = true; //rende visibile il punteggio
-                lblP.Text = p.ToString(); //imposta il testo del punteggio a 0
-                lblTrn.Visible = true; //rende visibile il turno
-                lblR2.Visible = true; //rende visibile il punteggio
-                lblPG.Text = p.ToString(); //imposta il testo del punteggio a 0
-                lblT.Visible = true; //rende visibile il timer
-                pnlPuffo.Visible = true;
+                p++; 
+                lblP.Text = p.ToString(); 
+                Random rnd = new Random(); 
+                int Xmax = pnlP.Width - l; 
+                int Ymax = pnlP.Height - h;
+                int x = rnd.Next(0, Xmax); 
+                int y = rnd.Next(0, Ymax);
+                pictureBoxCasa.Location = new Point(x, y); 
 
-                lblTc.Text = nm.ToString(); //imposta il testo del timer a 20
-            }
-            private void casettaraggiunta() //funzione che controlla se c'è una collisione tra il puffo e la casa
-
-            {
-                int puffoD = pnlPuffo.Location.X + pnlPuffo.Width; //bordo destro del puffo, è la somma del bordo sinistro con la larghezza del puffo
-                int puffoG = pnlPuffo.Location.Y + pnlPuffo.Height;//bordo basso del puffo, è la somma del bordo superiore con l'altezza del puffo
-
-
-                int casaD = pnlC.Location.X + pnlC.Width; //bordo destro della casa, è la somma del bordo sinistro con la larghezza della casa
-                int casaG = pnlC.Location.Y + pnlC.Height; //bordo basso della casa, è la somma del bordo superiore con l'altezza della casa
-                if (pnlPuffo.Location.X < casaD && puffoD > pnlC.Location.X && pnlPuffo.Location.Y < casaG && puffoG > pnlC.Location.Y) //controlla se c'è una collisione tra un bordo del puffo e della casa, entra nell'if solo se tutte e 4 le condizioni sono vere
+                for (int i = 0; i < 10; i++)
                 {
-                    p++; //aumenta il punteggio 
-                    lblP.Text = p.ToString(); //stampa il punteggio
-                    Random rnd = new Random(); //crea un generatore di numeri 
-                    int Xmax = pnlP.Width - l; //calcola i limiti in cui posizionare la casa
-                    int Ymax = pnlP.Height - h;
-                    int x = rnd.Next(0, Xmax); //genera un numero randomico
-                    int y = rnd.Next(0, Ymax);
-                    pnlC.Location = new Point(x, y); //aggiorna la posizione della casa
+                    int maxX = pnlP.Width - alberiArray[i].Width;
+                    int maxY = pnlP.Height - alberiArray[i].Height;
+                    int posX = rnd.Next(0, maxX);
+                    int posY = rnd.Next(0,  maxY);
+                    alberiArray[i].Location = new Point(posX, posY);
                 }
 
             }
-            private void Form1_KeyDown(object sender, KeyEventArgs e)
+
+        }
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (p1 == true && nm > 0)
             {
-                if (p1 == true && nm > 0)
+                lblPT.Text = "Puffo";
+                if (e.KeyCode == Keys.W)
                 {
-                    lblPT.Text = "Puffo";
-                    if (e.KeyCode == Keys.W)
+                    if (pictureBoxPuffo.Location.Y - velocità < 0)
                     {
-                        if (pnlPuffo.Location.Y - velocità < 0)
-                        {
-                            pnlPuffo.Location = new Point(pnlPuffo.Location.X, 0);
+                        pictureBoxPuffo.Location = new Point(pictureBoxPuffo.Location.X, 0);
 
-                        }
-                        else
-                        {
-                            pnlPuffo.Location = new Point(pnlPuffo.Location.X, pnlPuffo.Location.Y - velocità);
-                        }
-                        nm--;
-                        casettaraggiunta();
                     }
-                    else if (e.KeyCode == Keys.A)
+                    else
                     {
-                        if (pnlPuffo.Location.X - velocità < 0)
-                        {
-                            pnlPuffo.Location = new Point(0, pnlPuffo.Location.Y);
-
-                        }
-                        else
-                        {
-                            pnlPuffo.Location = new Point(pnlPuffo.Location.X - velocità, pnlPuffo.Location.Y);
-                        }
-                        nm--;
-                        casettaraggiunta();
+                        pictureBoxPuffo.Location = new Point(pictureBoxPuffo.Location.X, pictureBoxPuffo.Location.Y - velocità);
                     }
-                    else if (e.KeyCode == Keys.S)
-                    {
-                        int maxY = pnlP.Height - pnlPuffo.Height;
-                        if (pnlPuffo.Location.Y + velocità >= maxY)
-                        {
-                            pnlPuffo.Location = new Point(pnlPuffo.Location.X, maxY);
-
-                        }
-                        else
-                        {
-                            pnlPuffo.Location = new Point(pnlPuffo.Location.X, pnlPuffo.Location.Y + velocità);
-                        }
-                        nm--;
-                        casettaraggiunta();
-                    }
-                    else if (e.KeyCode == Keys.D)
-                    {
-                        int maxX = pnlP.Width - pnlPuffo.Width;
-                        if (pnlPuffo.Location.X + velocità >= maxX)
-                        {
-                            pnlPuffo.Location = new Point(maxX, pnlPuffo.Location.Y);
-
-                        }
-                        else
-                        {
-                            pnlPuffo.Location = new Point(pnlPuffo.Location.X + velocità, pnlPuffo.Location.Y);
-                        }
-                        nm--;
-                        casettaraggiunta();
-                    }
-                    lblTc.Text = nm.ToString();
-
-
-                    if (nm == 0)
-                    {
-                        p1 = false;
-                        nmg = 20;
-                    }
-
+                    nm--;
+                    casettaraggiunta();
+                    toccaAlbero();
                 }
-                else if (p1 == false && nmg > 0)
+                else if (e.KeyCode == Keys.A)
                 {
-                    lblPT.Text = "Gargamella";
-                    if (e.KeyCode == Keys.I)
+                    if (pictureBoxPuffo.Location.X - velocità < 0)
                     {
-                        if (pnlG.Location.Y - velocità < 0)
-                        {
-                            pnlG.Location = new Point(pnlG.Location.X, 0);
+                        pictureBoxPuffo.Location = new Point(0, pictureBoxPuffo.Location.Y);
 
-                        }
-                        else
-                        {
-                            pnlG.Location = new Point(pnlG.Location.X, pnlG.Location.Y - velocità);
-                        }
-                        nmg--;
-                        pufforaggiunto();
                     }
-                    else if (e.KeyCode == Keys.J)
+                    else
                     {
-                        if (pnlG.Location.X - velocità < 0)
-                        {
-                            pnlG.Location = new Point(0, pnlG.Location.Y);
-
-                        }
-                        else
-                        {
-                            pnlG.Location = new Point(pnlG.Location.X - velocità, pnlG.Location.Y);
-                        }
-                        nmg--;
-                        pufforaggiunto();
+                        pictureBoxPuffo.Location = new Point(pictureBoxPuffo.Location.X - velocità, pictureBoxPuffo.Location.Y);
                     }
-                    else if (e.KeyCode == Keys.K)
-                    {
-                        int maxY = pnlP.Height - pnlG.Height;
-                        if (pnlG.Location.Y + velocità >= maxY)
-                        {
-                            pnlG.Location = new Point(pnlG.Location.X, maxY);
-
-                        }
-                        else
-                        {
-                            pnlG.Location = new Point(pnlG.Location.X, pnlG.Location.Y + velocità);
-                        }
-                        nmg--;
-                        pufforaggiunto();
-                    }
-                    else if (e.KeyCode == Keys.L)
-                    {
-                        int maxX = pnlP.Width - pnlG.Width;
-                        if (pnlG.Location.X + velocità >= maxX)
-                        {
-                            pnlG.Location = new Point(maxX, pnlG.Location.Y);
-
-                        }
-                        else
-                        {
-                            pnlG.Location = new Point(pnlG.Location.X + velocità, pnlG.Location.Y);
-                        }
-                        nmg--;
-                        pufforaggiunto();
-                    }
-                    lblTc.Text = nmg.ToString();
-
-
-                    if (nmg == 0)
-                    {
-                        nm = 20;
-                        p1 = true;
-                    }
-
+                    nm--;
+                    casettaraggiunta();
+                    toccaAlbero();
                 }
+                else if (e.KeyCode == Keys.S)
+                {
+                    int maxY = pnlP.Height - pictureBoxPuffo.Height;
+                    if (pictureBoxPuffo.Location.Y + velocità >= maxY)
+                    {
+                        pictureBoxPuffo.Location = new Point(pictureBoxPuffo.Location.X, maxY);
+
+                    }
+                    else
+                    {
+                        pictureBoxPuffo.Location = new Point(pictureBoxPuffo.Location.X, pictureBoxPuffo.Location.Y + velocità);
+                    }
+                    nm--;
+                    casettaraggiunta();
+                    toccaAlbero();
+                }
+                else if (e.KeyCode == Keys.D)
+                {
+                    int maxX = pnlP.Width - pictureBoxPuffo.Width;
+                    if (pictureBoxPuffo.Location.X + velocità >= maxX)
+                    {
+                        pictureBoxPuffo.Location = new Point(maxX, pictureBoxPuffo.Location.Y);
+
+                    }
+                    else
+                    {
+                        pictureBoxPuffo.Location = new Point(pictureBoxPuffo.Location.X + velocità, pictureBoxPuffo.Location.Y);
+                    }
+                    nm--;
+                    casettaraggiunta();
+                    toccaAlbero();
+                }
+                lblTc.Text = nm.ToString();
+
+
+                if (nm == 0)
+                {
+                    p1 = false;
+                    nmg = 20;
+                }
+
             }
-
-            private void pufforaggiunto()
+            else if (p1 == false && nmg > 0)
             {
-                int GargaD = pnlG.Location.X + pnlG.Width; //bordo destro del puffo, è la somma del bordo sinistro con la larghezza del puffo
-                int GargaG = pnlG.Location.Y + pnlG.Height;//bordo basso del puffo, è la somma del bordo superiore con l'altezza del puffo
+                lblPT.Text = "Gargamella";
+                if (e.KeyCode == Keys.I)
+                {
+                    if (pictureBoxGarga.Location.Y - velocità < 0)
+                    {
+                        pictureBoxGarga.Location = new Point(pictureBoxGarga.Location.X, 0);
+
+                    }
+                    else
+                    {
+                        pictureBoxGarga.Location = new Point(pictureBoxGarga.Location.X, pictureBoxGarga.Location.Y - velocità);
+                    }
+                    nmg--;
+                    pufforaggiunto();
+                    toccaAlbero();
+                }
+                else if (e.KeyCode == Keys.J)
+                {
+                    if (pictureBoxGarga.Location.X - velocità < 0)
+                    {
+                        pictureBoxGarga.Location = new Point(0, pictureBoxGarga.Location.Y);
+
+                    }
+                    else
+                    {
+                        pictureBoxGarga.Location = new Point(pictureBoxGarga.Location.X - velocità, pictureBoxGarga.Location.Y);
+                    }
+                    nmg--;
+                    pufforaggiunto();
+                    toccaAlbero();
+                }
+                else if (e.KeyCode == Keys.K)
+                {
+                    int maxY = pnlP.Height - pictureBoxGarga.Height;
+                    if (pictureBoxGarga.Location.Y + velocità >= maxY)
+                    {
+                        pictureBoxGarga.Location = new Point(pictureBoxGarga.Location.X, maxY);
+
+                    }
+                    else
+                    {
+                        pictureBoxGarga.Location = new Point(pictureBoxGarga.Location.X, pictureBoxGarga.Location.Y + velocità);
+                    }
+                    nmg--;
+                    pufforaggiunto();
+                    toccaAlbero();
+                }
+                else if (e.KeyCode == Keys.L)
+                {
+                    int maxX = pnlP.Width - pictureBoxGarga.Width;
+                    if (pictureBoxGarga.Location.X + velocità >= maxX)
+                    {
+                        pictureBoxGarga.Location = new Point(maxX, pictureBoxGarga.Location.Y);
+
+                    }
+                    else
+                    {
+                        pictureBoxGarga.Location = new Point(pictureBoxGarga.Location.X + velocità, pictureBoxGarga.Location.Y);
+                    }
+                    nmg--;
+                    pufforaggiunto();
+                    toccaAlbero();
+                }
+                lblTc.Text = nmg.ToString();
 
 
-                int puffoD = pnlPuffo.Location.X + pnlPuffo.Width; //bordo destro della casa, è la somma del bordo sinistro con la larghezza della casa
-                int puffoG = pnlPuffo.Location.Y + pnlPuffo.Height; //bordo basso della casa, è la somma del bordo superiore con l'altezza della casa
-                if (pnlG.Location.X < puffoD && GargaD > pnlPuffo.Location.X && pnlG.Location.Y < puffoG && GargaG > pnlPuffo.Location.Y) //controlla se c'è una collisione tra un bordo del puffo e della casa, entra nell'if solo se tutte e 4 le condizioni sono vere
+                if (nmg == 0)
+                {
+                    nm = 20;
+                    p1 = true;
+                }
+
+            }
+        }
+
+        private void pufforaggiunto()
+        {
+            int GargaD = pictureBoxGarga.Location.X + pictureBoxGarga.Width; 
+            int GargaG = pictureBoxGarga.Location.Y + pictureBoxGarga.Height;
+
+
+            int puffoD = pictureBoxPuffo.Location.X + pictureBoxPuffo.Width; 
+            int puffoG = pictureBoxPuffo.Location.Y + pictureBoxPuffo.Height;
+            if (pictureBoxGarga.Location.X < puffoD && GargaD > pictureBoxPuffo.Location.X && pictureBoxGarga.Location.Y < puffoG && GargaG > pictureBoxPuffo.Location.Y) 
+            {
+                if (p == 0)
+                {
+                    p = 0;
+                }
+                else
                 {
                     p--;
-                    pg++;
-                    lblP.Text = p.ToString(); //stampa il punteggio
-                    lblPG.Text = pg.ToString();
-                    Random rnd = new Random(); //crea un generatore di numeri 
-                    int Xmax = pnlP.Width - lp; //calcola i limiti in cui posizionare la casa
-                    int Ymax = pnlP.Height - hp;
-                    int x = rnd.Next(0, Xmax); //genera un numero randomico
-                    int y = rnd.Next(0, Ymax);
-                    pnlPuffo.Location = new Point(x, y); //aggiorna la posizione della casa
                 }
+
+                pg++;
+                lblP.Text = p.ToString(); 
+                lblPG.Text = pg.ToString();
+                Random rnd = new Random(); 
+                int Xmax = pnlP.Width - lp; 
+                int Ymax = pnlP.Height - hp;
+                int x = rnd.Next(0, Xmax); 
+                int y = rnd.Next(0, Ymax);
+                pictureBoxPuffo.Location = new Point(x, y); 
             }
+        }
         private void alberi()
         {
             Random rnd = new Random();
-            for (int i = 1; i <= 10; i++)
+
+            for (int i = 0; i < 10; i++)
             {
-                Panel pnlA = new Panel();
-                pnlA.Size = new Size(50, 50);
-                pnlA.BackColor = Color.Green; // Aggiungi un colore per vederli!
+                alberiArray[i] = new Panel();
+                alberiArray[i].Size = new Size(50, 50);
+                alberiArray[i].BackgroundImage = Image.FromFile(@"C:\Users\alesg\OneDrive\Desktop\albero.jpg");
+                alberiArray[i].BackgroundImageLayout = ImageLayout.Stretch;
 
-                int maxX = pnlP.Width - pnlA.Width;
-                int maxY = pnlP.Height - pnlA.Height;
+                int maxX = pnlP.Width - alberiArray[i].Width;
+                int maxY = pnlP.Height - alberiArray[i].Height;
 
-                // 2. Genera X e Y separatamente (e gestisci il caso in cui pnlP sia piccolo)
-                int posX = rnd.Next(0, Math.Max(1, maxX));
-                int posY = rnd.Next(0, Math.Max(1, maxY));
+                int posX = rnd.Next(0, maxX);
+                int posY = rnd.Next(0, maxY);
 
-                pnlA.Location = new Point(posX, posY);
+                alberiArray[i].Location = new Point(posX, posY);
 
-                // 3. FONDAMENTALE: Aggiungi il pannello al contenitore
-                pnlP.Controls.Add(pnlA);
+                pnlP.Controls.Add(alberiArray[i]);
+
             }
         }
+
+        private void toccaAlbero()
+        {
+            if (p1 == true)
+            {
+
+                for (int i = 0; i < 10; i++)
+                {
+                    int puffoD = pictureBoxPuffo.Location.X + pictureBoxPuffo.Width;
+                    int puffoG = pictureBoxPuffo.Location.Y + pictureBoxPuffo.Height;
+
+
+
+                    int alberoD = alberiArray[i].Location.X + alberiArray[i].Width;
+                    int alberoG = alberiArray[i].Location.Y + alberiArray[i].Height;
+                    if (pictureBoxPuffo.Location.X < alberoD && puffoD > alberiArray[i].Location.X && pictureBoxPuffo.Location.Y < alberoG && puffoG > alberiArray[i].Location.Y)
+                    {
+                        p1 = false;
+                        nmg = 20;
+                        lblTc.Text = nmg.ToString();
+                        break;
+                    }
+
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    int GargaD = pictureBoxGarga.Location.X + pictureBoxGarga.Width;
+                    int GargaG = pictureBoxGarga.Location.Y + pictureBoxGarga.Height;
+
+
+
+                    int alberoD = alberiArray[i].Location.X + alberiArray[i].Width;
+                    int alberoG = alberiArray[i].Location.Y + alberiArray[i].Height;
+
+                    if (pictureBoxGarga.Location.X < alberoD && GargaD > alberiArray[i].Location.X && pictureBoxGarga.Location.Y < alberoG && GargaG > alberiArray[i].Location.Y)
+                    {
+                        p1 = true;
+                        nm = 20;
+                        lblTc.Text = nm.ToString();
+                        break;
+                    }
+                }
+            }
         }
+
+        
     }
+}
